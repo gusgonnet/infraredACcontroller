@@ -212,6 +212,10 @@ decode_results results;
 int TX_PIN = A5; //this is hardcoded in IRremoteInt.h line 488: #define TIMER_PWM_PIN        A5
 IRsend irsend;
 
+/*******************************************************************************
+ * Function Name  : setup
+ * Description    : this function runs once at system boot
+ *******************************************************************************/
 void setup()
 {
   // publish startup message with firmware version
@@ -222,19 +226,33 @@ void setup()
 
   irrecv.enableIRIn(); // Start the receiver
 
+  // declare cloud functions
+  // https://docs.particle.io/reference/firmware/photon/#particle-function-
+  // Up to 15 cloud functions may be registered and each function name is limited to a maximum of 12 characters.
   Particle.function("setTemp", setTemp);
   Particle.function("turnOff", turnOff);
 }
 
+/*******************************************************************************
+ * Function Name  : loop
+ * Description    : this function runs continuously while the project is running
+ *******************************************************************************/
 void loop()
 {
   // enable this function to start decoding your remote
   // decodeIRcodes();
 }
 
-// this function supports:
-// heat19
-// cool23
+/*******************************************************************************
+ * Function Name  : setTemp
+ * Description    : this function sents the IR command to set the temperature of the device
+                    for cooling, the command must be in the form of "coolXX" 
+                    where 18 <= XX <= 30
+                    Example: "cool23"
+                    for heating, the command must be in the form of "heatXX" 
+                    where 16 <= XX <= 30
+                    Example: "heat18"
+ *******************************************************************************/
 int setTemp(String command)
 {
   unsigned int irPulsesToSendWithOnCommand[IR_COMMAND_LENGTH];
@@ -328,11 +346,29 @@ int setTemp(String command)
   return 0;
 }
 
-// Now remember that in this totally arbitrary encoding:
-//  - 3 means an 8500 microseconds pulse
-//  - 2 means a 4000 microseconds pulse
-//  - 1 means a 1500 microseconds pulse
-//  - 0 means a 500 microseconds pulse
+/*******************************************************************************
+ * Function Name  : turnOff
+ * Description    : this function sents the IR command to turn off the device
+ *******************************************************************************/
+int turnOff(String dummy)
+{
+
+  irsend.sendRaw(off, 59, 38);
+  delay(500);
+  irsend.sendRaw(off, 59, 38);
+  Particle.publish(APP_NAME, "Setting device to OFF", PRIVATE);
+  return 0;
+}
+
+/*******************************************************************************
+ * Function Name  : convertToPulseDuration
+ * Description    : this function sents the IR command to set the temperature of the device
+                    Now remember that in this totally arbitrary encoding:
+                     - 3 means an 8500 microseconds pulse
+                     - 2 means a 4000 microseconds pulse
+                     - 1 means a 1500 microseconds pulse
+                     - 0 means a 500 microseconds pulse
+ *******************************************************************************/
 int convertToPulseDuration(unsigned int code)
 {
   switch (code)
@@ -353,21 +389,16 @@ int convertToPulseDuration(unsigned int code)
   return -1;
 }
 
-int turnOff(String dummy)
-{
-
-  irsend.sendRaw(off, 59, 38);
-  delay(500);
-  irsend.sendRaw(off, 59, 38);
-  Particle.publish(APP_NAME, "Setting device to OFF", PRIVATE);
-  return 0;
-}
 
 // these are codes for a Samsung TV. I leave them here as an easy way to test your IR sending circuit
 // (handy if you have a samsung TV around)
 unsigned int SamsungVolumeUp[68] = {4600, 4350, 650, 1550, 700, 1500, 700, 1550, 700, 400, 700, 400, 700, 450, 650, 450, 700, 400, 700, 1500, 700, 1550, 650, 1550, 700, 400, 700, 400, 700, 450, 650, 450, 700, 400, 700, 1500, 700, 1550, 650, 1550, 700, 400, 700, 450, 700, 400, 700, 400, 700, 400, 700, 450, 650, 450, 650, 450, 650, 1550, 700, 1500, 700, 1550, 700, 1500, 700, 1550, 650};
 unsigned int SamsungVolumeDown[68] = {4450, 4450, 550, 1650, 550, 1650, 550, 1650, 550, 550, 550, 600, 500, 600, 500, 600, 500, 600, 500, 1650, 600, 1600, 600, 1600, 600, 550, 550, 550, 550, 550, 550, 550, 550, 550, 550, 1650, 550, 1650, 550, 600, 500, 1650, 550, 600, 550, 550, 500, 600, 550, 550, 550, 550, 550, 550, 550, 1650, 550, 550, 550, 1650, 550, 1650, 550, 1650, 550, 1650, 550};
 
+/*******************************************************************************
+ * Function Name  : sendSamsungVolumeUp
+ * Description    : send a samsung volume up code (good for testing your circuit)
+ *******************************************************************************/
 int sendSamsungVolumeUp(String dummy)
 {
   irsend.sendRaw(SamsungVolumeUp, 68, 38);
@@ -375,6 +406,10 @@ int sendSamsungVolumeUp(String dummy)
   return 0;
 }
 
+/*******************************************************************************
+ * Function Name  : sendSamsungVolumeDown
+ * Description    : send a samsung volume down code (good for testing your circuit)
+ *******************************************************************************/
 int sendSamsungVolumeDown(String dummy)
 {
   irsend.sendRaw(SamsungVolumeDown, 68, 38);
@@ -382,7 +417,16 @@ int sendSamsungVolumeDown(String dummy)
   return 0;
 }
 
-// enable this function to start decoding your remote
+/*******************************************************************************
+ * Function Name  : decodeIRcodes
+ * Description    : this will print on the serial port the codes your remote is sending
+                    enable this function in the loop function if you intend to use it
+                    Now remember that in this totally arbitrary encoding:
+                     - 3 means an 8500 microseconds pulse
+                     - 2 means a 4000 microseconds pulse
+                     - 1 means a 1500 microseconds pulse
+                     - 0 means a 500 microseconds pulse
+ *******************************************************************************/
 void decodeIRcodes()
 {
 
