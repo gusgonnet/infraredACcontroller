@@ -1,18 +1,18 @@
 // Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)
 // This is a human-readable summary of (and not a substitute for) the license.
 // Disclaimer
-// 
+//
 // You are free to:
 // Share — copy and redistribute the material in any medium or format
 // Adapt — remix, transform, and build upon the material
 // The licensor cannot revoke these freedoms as long as you follow the license terms.
-// 
+//
 // Under the following terms:
 // Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
 // NonCommercial — You may not use the material for commercial purposes.
 // ShareAlike — If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
 // No additional restrictions — You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits.
-// 
+//
 // Notices:
 // You do not have to comply with the license for elements of the material in the public domain or where your use is permitted by an applicable exception or limitation.
 // No warranties are given. The license may not give you all of the permissions necessary for your intended use. For example, other rights such as publicity, privacy, or moral rights may limit how you use the material.
@@ -63,7 +63,7 @@ unsigned int cool_28[59] = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0
 unsigned int cool_29[59] = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0};
 unsigned int cool_30[59] = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0};
 
-unsigned int cool[13][59] = { {*cool_18}, {*cool_19}, {*cool_20}, {*cool_21}, {*cool_22}, {*cool_23}, {*cool_24}, {*cool_25}, {*cool_26}, {*cool_27}, {*cool_28}, {*cool_29}, {*cool_30}};
+unsigned int cool[13][59] = {{*cool_18}, {*cool_19}, {*cool_20}, {*cool_21}, {*cool_22}, {*cool_23}, {*cool_24}, {*cool_25}, {*cool_26}, {*cool_27}, {*cool_28}, {*cool_29}, {*cool_30}};
 
 // HEAT COMMANDS
 unsigned int heat_16[59] = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0};
@@ -81,7 +81,7 @@ unsigned int heat_27[59] = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0
 unsigned int heat_28[59] = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0};
 unsigned int heat_29[59] = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0};
 unsigned int heat_30[59] = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0};
-unsigned int heat[15][59] = { {*heat_18}, {*heat_19}, {*heat_20}, {*heat_21}, {*heat_22}, {*heat_23}, {*heat_24}, {*heat_25}, {*heat_26}, {*heat_27}, {*heat_28}, {*heat_29}, {*heat_30}};
+unsigned int heat[15][59] = {{*heat_18}, {*heat_19}, {*heat_20}, {*heat_21}, {*heat_22}, {*heat_23}, {*heat_24}, {*heat_25}, {*heat_26}, {*heat_27}, {*heat_28}, {*heat_29}, {*heat_30}};
 
 // OFF COMMAND
 unsigned int off[59] = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0};
@@ -219,38 +219,176 @@ void setup()
   Particle.function("turnOff", turnOff);
 }
 
-#define FNV_PRIME_32 16777619
-#define FNV_BASIS_32 2166136261
-
-int compare(unsigned int oldval, unsigned int newval)
-{
-  if (newval < oldval * .8)
-  {
-    return 0;
-  }
-  else if (oldval < newval * .8)
-  {
-    return 2;
-  }
-  else
-  {
-    return 1;
-  }
-}
-unsigned long decodeHash(decode_results *results)
-{
-  unsigned long hash = FNV_BASIS_32;
-  for (int i = 1; i + 2 < results->rawlen; i++)
-  {
-    int value = compare(results->rawbuf[i], results->rawbuf[i + 2]);
-    // Add value into the hash
-    hash = (hash * FNV_PRIME_32) ^ value;
-  }
-  return hash;
-}
-
 void loop()
 {
+  // enable this function to start decoding your remote
+  // decodeIRcodes();
+}
+
+// this function supports:
+// heat19
+// cool23
+int setTemp(String command)
+{
+  unsigned int irPulsesToSendWithOnCommand[IR_COMMAND_LENGTH];
+  unsigned int irPulsesToSend[IR_COMMAND_LENGTH];
+  int i, targetTemp;
+  bool commandIsOK = false;
+
+  String tempCommand = command.toLowerCase();
+  String decodedCommand = "";
+
+  // verify the command length is valid
+  if (tempCommand.length() != 6)
+  {
+    Particle.publish("ERROR", "Invalid command: " + command, PRIVATE);
+    return -1;
+  }
+
+  // verify the command is valid
+  if (!((tempCommand.startsWith(COMMAND_HEAT)) || (tempCommand.startsWith(COMMAND_COOL))))
+  {
+    Particle.publish("ERROR", "Invalid command: " + command, PRIVATE);
+    return -1;
+  }
+
+  // parse the temperature
+  targetTemp = tempCommand.substring(4, 2).toInt();
+
+  // is it a HEAT command?
+  if (tempCommand.startsWith(COMMAND_HEAT)) //"heat"
+  {
+    decodedCommand = COMMAND_HEAT;
+
+    // verify the temperature is valid. Valid range is 16~30
+    if ((targetTemp < 16) || (targetTemp > 30))
+    {
+      Particle.publish("ERROR", "Invalid temperature: " + String(targetTemp) + ". Valid range: 16~30", PRIVATE);
+      return -1;
+    }
+  }
+
+  // is it a COOL command?
+  if (tempCommand.startsWith(COMMAND_COOL)) //"cool"
+  {
+    decodedCommand = COMMAND_COOL;
+
+    // verify the temperature is valid. Valid range is 18~30
+    if ((targetTemp < 18) || (targetTemp > 30))
+    {
+      Particle.publish("ERROR", "Invalid temperature: " + String(targetTemp) + ". Valid range: 18~30", PRIVATE);
+      return -1;
+    }
+  }
+
+  // now I have to get the command to send from the respective array
+  if (decodedCommand == COMMAND_COOL)
+  {
+    // unsigned int cool[13][59] = { {*cool_18}, {*cool_19}, {*cool_20}, {*cool_21}, {*cool_22}, {*cool_23}, {*cool_24}, {*cool_25}, {*cool_26}, {*cool_27}, {*cool_28}, {*cool_29}, {*cool_30}};
+    for (int i = 0; i < IR_COMMAND_LENGTH; i++)
+    {
+      irPulsesToSendWithOnCommand[i] = cool[targetTemp - 18][i];
+      irPulsesToSend[i] = cool[targetTemp - 18][i];
+    }
+  }
+  if (decodedCommand == COMMAND_HEAT)
+  {
+    // unsigned int heat_16[59] = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0};
+    for (int i = 0; i < IR_COMMAND_LENGTH; i++)
+    {
+      irPulsesToSendWithOnCommand[i] = heat[targetTemp - 16][i];
+      irPulsesToSend[i] = heat[targetTemp - 16][i];
+    }
+  }
+
+  // modify the on command with the ON bits
+  // To obtain the ON command for a setting/mode, the plan is to set the pulse at position 27 to 0 and the pulse at position 51 to 1.
+  irPulsesToSendWithOnCommand[27] = 0;
+  irPulsesToSendWithOnCommand[51] = 1;
+
+  Particle.publish("DEBUG", String(irPulsesToSend[0]), PRIVATE);
+
+  // convert the command from 3,2,1,0 to respective pulse duration
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++)
+  {
+    irPulsesToSendWithOnCommand[i] = convertToPulseDuration(irPulsesToSendWithOnCommand[i]);
+    irPulsesToSend[i] = convertToPulseDuration(irPulsesToSend[i]);
+  }
+
+  Particle.publish("DEBUG", String(irPulsesToSend[0]), PRIVATE);
+
+  // let's send the command twice so we make sure the device gets it
+  irsend.sendRaw(irPulsesToSendWithOnCommand, IR_COMMAND_LENGTH, IR_CARRIER_FREQUENCY); // ---->>> this should be the ON command plus temp desired
+  delay(500);
+  irsend.sendRaw(irPulsesToSend, IR_COMMAND_LENGTH, IR_CARRIER_FREQUENCY);
+  Particle.publish(APP_NAME, "Setting device to: " + decodedCommand + "/" + targetTemp, PRIVATE);
+  return 0;
+}
+
+// Now remember that in this totally arbitrary encoding:
+//  - 3 means an 8500 microseconds pulse
+//  - 2 means a 4000 microseconds pulse
+//  - 1 means a 1500 microseconds pulse
+//  - 0 means a 500 microseconds pulse
+int convertToPulseDuration(unsigned int code)
+{
+  switch (code)
+  {
+  case 0:
+    return 500;
+    break;
+  case 1:
+    return 1500;
+    break;
+  case 2:
+    return 4000;
+    break;
+  case 3:
+    return 8500;
+    break;
+  }
+  return -1;
+}
+
+// this function supports:
+// off
+int turnOff(String command)
+{
+  // is it the OFF command?
+  if (command.toLowerCase() != COMMAND_OFF) // "off"
+  {
+    Particle.publish("ERROR", "Invalid command: " + command, PRIVATE);
+    return -1;
+  }
+
+  irsend.sendRaw(off, 59, 38);
+  Particle.publish(APP_NAME, "Setting device to OFF", PRIVATE);
+  return 0;
+}
+
+// these are codes for a Samsung TV. I leave them here as an easy way to test your IR sending circuit
+// (handy if you have a samsung TV around)
+unsigned int SamsungVolumeUp[68] = {4600, 4350, 650, 1550, 700, 1500, 700, 1550, 700, 400, 700, 400, 700, 450, 650, 450, 700, 400, 700, 1500, 700, 1550, 650, 1550, 700, 400, 700, 400, 700, 450, 650, 450, 700, 400, 700, 1500, 700, 1550, 650, 1550, 700, 400, 700, 450, 700, 400, 700, 400, 700, 400, 700, 450, 650, 450, 650, 450, 650, 1550, 700, 1500, 700, 1550, 700, 1500, 700, 1550, 650};
+unsigned int SamsungVolumeDown[68] = {4450, 4450, 550, 1650, 550, 1650, 550, 1650, 550, 550, 550, 600, 500, 600, 500, 600, 500, 600, 500, 1650, 600, 1600, 600, 1600, 600, 550, 550, 550, 550, 550, 550, 550, 550, 550, 550, 1650, 550, 1650, 550, 600, 500, 1650, 550, 600, 550, 550, 500, 600, 550, 550, 550, 550, 550, 550, 550, 1650, 550, 550, 550, 1650, 550, 1650, 550, 1650, 550, 1650, 550};
+
+int sendSamsungVolumeUp(String dummy)
+{
+  irsend.sendRaw(SamsungVolumeUp, 68, 38);
+  Particle.publish(APP_NAME, "Sent Samsung volume UP code", PRIVATE);
+  return 0;
+}
+
+int sendSamsungVolumeDown(String dummy)
+{
+  irsend.sendRaw(SamsungVolumeDown, 68, 38);
+  Particle.publish(APP_NAME, "Sent Samsung volume DOWN code", PRIVATE);
+  return 0;
+}
+
+// enable this function to start decoding your remote
+void decodeIRcodes()
+{
+
   if (irrecv.decode(&results))
   {
     unsigned long hash = decodeHash(&results);
@@ -302,249 +440,32 @@ void loop()
   }
 }
 
-// this function supports:
-// heat19
-// cool23
-int setTemp(String command)
+#define FNV_PRIME_32 16777619
+#define FNV_BASIS_32 2166136261
+
+int compare(unsigned int oldval, unsigned int newval)
 {
-  unsigned int irPulsesToSend[IR_COMMAND_LENGTH];
-  int i, targetTemp;
-  bool commandIsOK = false;
-
-  String tempCommand = command.toLowerCase();
-  String decodedCommand = "";
-
-  // verify the command length is valid
-  if (tempCommand.length() != 6)
+  if (newval < oldval * .8)
   {
-    Particle.publish("ERROR", "Invalid command: " + command, PRIVATE);
-    return -1;
+    return 0;
   }
-
-  // verify the command is valid
-  if (!((tempCommand.startsWith(COMMAND_HEAT)) || (tempCommand.startsWith(COMMAND_COOL))))
+  else if (oldval < newval * .8)
   {
-    Particle.publish("ERROR", "Invalid command: " + command, PRIVATE);
-    return -1;
-  }
-
-  // parse the temperature
-  targetTemp = tempCommand.substring(4, 2).toInt();
-
-  // is it a HEAT command?
-  if (tempCommand.startsWith(COMMAND_HEAT)) //"heat"
-  {
-    decodedCommand = COMMAND_HEAT;
-
-    // verify the temperature is valid. Valid range is 16~30
-    if ((targetTemp < 16) || (targetTemp > 30))
-    {
-      Particle.publish("ERROR", "Invalid temperature: " + String(targetTemp) + ". Valid range: 16~30", PRIVATE);
-      return -1;
-    }
-  }
-
-  // is it a COOL command?
-  if (tempCommand.startsWith(COMMAND_COOL)) //"cool"
-  {
-    decodedCommand = COMMAND_COOL;
-
-    // verify the temperature is valid. Valid range is 18~30
-    if ((targetTemp < 18) || (targetTemp > 30))
-    {
-      Particle.publish("ERROR", "Invalid temperature: " + String(targetTemp) + ". Valid range: 18~30", PRIVATE);
-      return -1;
-    }
-  }
-
-  // let's send the command twice so we make sure the device gets it
-  irsend.sendRaw(cool_18, IR_COMMAND_LENGTH, IR_CARRIER_FREQUENCY); // ---->>> this should be the ON command plus temp desired
-  delay(500);
-  irsend.sendRaw(cool_18, IR_COMMAND_LENGTH, IR_CARRIER_FREQUENCY);
-  Particle.publish(APP_NAME, "Setting temperature to: " + decodedCommand + "/" + targetTemp, PRIVATE);
-  return 0;
-}
-
-// this function supports:
-// off
-int turnOff(String command)
-{
-  // is it the OFF command?
-  if (command.toLowerCase() != COMMAND_OFF) // "off"
-  {
-    Particle.publish("ERROR", "Invalid command: " + command, PRIVATE);
-    return -1;
-  }
-
-  irsend.sendRaw(off, 59, 38);
-  Particle.publish(APP_NAME, "Setting device to OFF", PRIVATE);
-  return 0;
-}
-
-// these are codes for a Samsung TV. I leave them here as an easy way to test your IR sending circuit
-// (handy if you have a samsung TV around)
-unsigned int SamsungVolumeUp[68] = {4600, 4350, 650, 1550, 700, 1500, 700, 1550, 700, 400, 700, 400, 700, 450, 650, 450, 700, 400, 700, 1500, 700, 1550, 650, 1550, 700, 400, 700, 400, 700, 450, 650, 450, 700, 400, 700, 1500, 700, 1550, 650, 1550, 700, 400, 700, 450, 700, 400, 700, 400, 700, 400, 700, 450, 650, 450, 650, 450, 650, 1550, 700, 1500, 700, 1550, 700, 1500, 700, 1550, 650};
-unsigned int SamsungVolumeDown[68] = {4450, 4450, 550, 1650, 550, 1650, 550, 1650, 550, 550, 550, 600, 500, 600, 500, 600, 500, 600, 500, 1650, 600, 1600, 600, 1600, 600, 550, 550, 550, 550, 550, 550, 550, 550, 550, 550, 1650, 550, 1650, 550, 600, 500, 1650, 550, 600, 550, 550, 500, 600, 550, 550, 550, 550, 550, 550, 550, 1650, 550, 550, 550, 1650, 550, 1650, 550, 1650, 550, 1650, 550};
-
-int sendSamsungVolumeUp(String dummy)
-{
-  irsend.sendRaw(SamsungVolumeUp, 68, 38);
-  Particle.publish(APP_NAME, "Sent Samsung volume UP code", PRIVATE);
-  return 0;
-}
-
-int sendSamsungVolumeDown(String dummy)
-{
-  irsend.sendRaw(SamsungVolumeDown, 68, 38);
-  Particle.publish(APP_NAME, "Sent Samsung volume DOWN code", PRIVATE);
-  return 0;
-}
-
-// source : https://github.com/babean/BeanSQ-IRremote/blob/master/examples/IRrecord/IRrecord.ino
-// Stores the code for later playback
-// Most of this code is just logging
-void storeCode(decode_results *results)
-{
-  codeType = results->decode_type;
-  int count = results->rawlen;
-  if (codeType == UNKNOWN)
-  {
-    Serial.println("Received unknown code, saving as raw");
-    codeLen = results->rawlen - 1;
-    // To store raw codes:
-    // Drop first value (gap)
-    // Convert from ticks to microseconds
-    // Tweak marks shorter, and spaces longer to cancel out IR receiver distortion
-    for (int i = 1; i <= codeLen; i++)
-    {
-      if (i % 2)
-      {
-        // Mark
-        rawCodes[i - 1] = results->rawbuf[i] * USECPERTICK - MARK_EXCESS;
-        Serial.print(" m");
-      }
-      else
-      {
-        // Space
-        rawCodes[i - 1] = results->rawbuf[i] * USECPERTICK + MARK_EXCESS;
-        Serial.print(" s");
-      }
-      Serial.print(rawCodes[i - 1], DEC);
-    }
-    Serial.println("");
+    return 2;
   }
   else
   {
-    if (codeType == NEC)
-    {
-      Serial.print("Received NEC: ");
-      Particle.publish("Received NEC: ", "", PRIVATE);
-      if (results->value == REPEAT)
-      {
-        // Don't record a NEC repeat value as that's useless.
-        Serial.println("repeat; ignoring.");
-        return;
-      }
-    }
-    else if (codeType == SONY)
-    {
-      Serial.print("Received SONY: ");
-      Particle.publish("Received SONY: ", "", PRIVATE);
-    }
-    else if (codeType == PANASONIC)
-    {
-      Serial.print("Received PANASONIC: ");
-      Particle.publish("Received PANASONIC: ", "", PRIVATE);
-    }
-    else if (codeType == JVC)
-    {
-      Serial.print("Received JVC: ");
-      Particle.publish("Received JVC: ", "", PRIVATE);
-    }
-    else if (codeType == RC5)
-    {
-      Serial.print("Received RC5: ");
-      Particle.publish("Received RC5: ", "", PRIVATE);
-    }
-    else if (codeType == RC6)
-    {
-      Serial.print("Received RC6: ");
-      Particle.publish("Received RC6: ", "", PRIVATE);
-    }
-    else
-    {
-      Serial.print("Unexpected codeType ");
-      Serial.print(codeType, DEC);
-      Serial.println("");
-      Particle.publish("unexpected codetype: ", "", PRIVATE);
-    }
-    Serial.println(results->value, HEX);
-    codeValue = results->value;
-    codeLen = results->bits;
+    return 1;
   }
 }
-
-void sendCode(int repeat)
+unsigned long decodeHash(decode_results *results)
 {
-  if (codeType == NEC)
+  unsigned long hash = FNV_BASIS_32;
+  for (int i = 1; i + 2 < results->rawlen; i++)
   {
-    if (repeat)
-    {
-      irsend.sendNEC(REPEAT, codeLen);
-      Serial.println("Sent NEC repeat");
-    }
-    else
-    {
-      irsend.sendNEC(codeValue, codeLen);
-      Serial.print("Sent NEC ");
-      Serial.println(codeValue, HEX);
-    }
+    int value = compare(results->rawbuf[i], results->rawbuf[i + 2]);
+    // Add value into the hash
+    hash = (hash * FNV_PRIME_32) ^ value;
   }
-  else if (codeType == SONY)
-  {
-    irsend.sendSony(codeValue, codeLen);
-    Serial.print("Sent Sony ");
-    Serial.println(codeValue, HEX);
-  }
-  else if (codeType == PANASONIC)
-  {
-    irsend.sendPanasonic(codeValue, codeLen);
-    Serial.print("Sent Panasonic");
-    Serial.println(codeValue, HEX);
-  }
-  else if (codeType == JVC)
-  {
-    irsend.sendJVC(codeValue, codeLen, false);
-    Serial.print("Sent JVC");
-    Serial.println(codeValue, HEX);
-  }
-  else if (codeType == RC5 || codeType == RC6)
-  {
-    if (!repeat)
-    {
-      // Flip the toggle bit for a new button press
-      toggle = 1 - toggle;
-    }
-    // Put the toggle bit into the code to send
-    codeValue = codeValue & ~(1 << (codeLen - 1));
-    codeValue = codeValue | (toggle << (codeLen - 1));
-    if (codeType == RC5)
-    {
-      Serial.print("Sent RC5 ");
-      Serial.println(codeValue, HEX);
-      irsend.sendRC5(codeValue, codeLen);
-    }
-    else
-    {
-      irsend.sendRC6(codeValue, codeLen);
-      Serial.print("Sent RC6 ");
-      Serial.println(codeValue, HEX);
-    }
-  }
-  else if (codeType == UNKNOWN /* i.e. raw */)
-  {
-    // Assume 38 KHz
-    irsend.sendRaw(rawCodes, codeLen, 38);
-    Serial.println("Sent raw");
-  }
+  return hash;
 }
