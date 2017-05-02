@@ -28,9 +28,21 @@
 #include "IRremote.h"
 
 #define APP_NAME "infraredACcontroller"
-String VERSION = "Version 0.01";
+String VERSION = "Version 0.02";
+/*******************************************************************************
+ * changes in version 0.01:
+       * Initial version
+ * changes in version 0.02:
+       * ready for testing
+*******************************************************************************/
 
 SYSTEM_MODE(AUTOMATIC);
+
+#define IR_COMMAND_LENGTH 59
+#define IR_CARRIER_FREQUENCY 38
+#define COMMAND_OFF "off"
+#define COMMAND_HEAT "heat"
+#define COMMAND_COOL "cool"
 
 /* AC commands
  - 3 means an 8500 microseconds pulse
@@ -39,14 +51,6 @@ SYSTEM_MODE(AUTOMATIC);
  - 0 means a 500 microseconds pulse
 See explanation below.
 */
-
-#define IR_COMMAND_LENGTH 59
-#define IR_CARRIER_FREQUENCY 38
-#define COMMAND_OFF "off"
-#define COMMAND_HEAT "heat"
-#define COMMAND_COOL "cool"
-
-unsigned int templateCommand[59] = {8500, 4000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 // COOL COMMANDS
 unsigned int cool_18[59] = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -63,6 +67,7 @@ unsigned int cool_28[59] = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0
 unsigned int cool_29[59] = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0};
 unsigned int cool_30[59] = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0};
 
+// this 2 dimension array is for convenience of the code when setting the temperature
 unsigned int cool[13][59] = {{*cool_18}, {*cool_19}, {*cool_20}, {*cool_21}, {*cool_22}, {*cool_23}, {*cool_24}, {*cool_25}, {*cool_26}, {*cool_27}, {*cool_28}, {*cool_29}, {*cool_30}};
 
 // HEAT COMMANDS
@@ -81,6 +86,8 @@ unsigned int heat_27[59] = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0
 unsigned int heat_28[59] = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0};
 unsigned int heat_29[59] = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0};
 unsigned int heat_30[59] = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0};
+
+// this 2 dimension array is for convenience of the code when setting the temperature
 unsigned int heat[15][59] = {{*heat_18}, {*heat_19}, {*heat_20}, {*heat_21}, {*heat_22}, {*heat_23}, {*heat_24}, {*heat_25}, {*heat_26}, {*heat_27}, {*heat_28}, {*heat_29}, {*heat_30}};
 
 // OFF COMMAND
@@ -252,8 +259,8 @@ int setTemp(String command)
     return -1;
   }
 
-  // parse the temperature
-  targetTemp = tempCommand.substring(4, 2).toInt();
+  // parse the temperature, starting at 4th char
+  targetTemp = tempCommand.substring(4).toInt();
 
   // is it a HEAT command?
   if (tempCommand.startsWith(COMMAND_HEAT)) //"heat"
@@ -306,16 +313,12 @@ int setTemp(String command)
   irPulsesToSendWithOnCommand[27] = 0;
   irPulsesToSendWithOnCommand[51] = 1;
 
-  Particle.publish("DEBUG", String(irPulsesToSend[0]), PRIVATE);
-
   // convert the command from 3,2,1,0 to respective pulse duration
   for (int i = 0; i < IR_COMMAND_LENGTH; i++)
   {
     irPulsesToSendWithOnCommand[i] = convertToPulseDuration(irPulsesToSendWithOnCommand[i]);
     irPulsesToSend[i] = convertToPulseDuration(irPulsesToSend[i]);
   }
-
-  Particle.publish("DEBUG", String(irPulsesToSend[0]), PRIVATE);
 
   // let's send the command twice so we make sure the device gets it
   irsend.sendRaw(irPulsesToSendWithOnCommand, IR_COMMAND_LENGTH, IR_CARRIER_FREQUENCY); // ---->>> this should be the ON command plus temp desired
@@ -350,17 +353,11 @@ int convertToPulseDuration(unsigned int code)
   return -1;
 }
 
-// this function supports:
-// off
-int turnOff(String command)
+int turnOff(String dummy)
 {
-  // is it the OFF command?
-  if (command.toLowerCase() != COMMAND_OFF) // "off"
-  {
-    Particle.publish("ERROR", "Invalid command: " + command, PRIVATE);
-    return -1;
-  }
 
+  irsend.sendRaw(off, 59, 38);
+  delay(500);
   irsend.sendRaw(off, 59, 38);
   Particle.publish(APP_NAME, "Setting device to OFF", PRIVATE);
   return 0;
