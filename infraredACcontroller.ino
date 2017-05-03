@@ -631,3 +631,28 @@ void getTemp()
     }
   }
 }
+
+/*******************************************************************************
+********************************************************************************
+********************************************************************************
+ HELPER FUNCTIONS
+********************************************************************************
+********************************************************************************
+*******************************************************************************/
+
+/*******************************************************************************
+ * Function Name  : double2string
+ * Description    : return the string representation of the double number
+                     passed as parameter with 2 decimals
+ * Return         : the string
+ *******************************************************************************/
+String double2string(double doubleNumber)
+{
+  String stringNumber = String(doubleNumber);
+
+  //return only 2 decimals
+  // Example: show 19.00 instead of 19.000000
+  stringNumber = stringNumber.substring(0, stringNumber.length() - 4);
+
+  return stringNumber;
+}
