@@ -27,13 +27,19 @@
 #include "application.h"
 #include "IRremote.h"
 
+#include "Particle-OneWire.h"
+#include "DS18B20.h"
+#include "elapsedMillis.h"
+
 #define APP_NAME "infraredACcontroller"
-String VERSION = "Version 0.02";
+String VERSION = "Version 0.03";
 /*******************************************************************************
  * changes in version 0.01:
        * Initial version
  * changes in version 0.02:
        * ready for testing
+ * changes in version 0.03:
+       * adding temperature sensor ds18b20 on D2
 *******************************************************************************/
 
 SYSTEM_MODE(AUTOMATIC);
@@ -213,6 +219,30 @@ int TX_PIN = A5; //this is hardcoded in IRremoteInt.h line 488: #define TIMER_PW
 IRsend irsend;
 
 /*******************************************************************************
+ temperature sensor and variables
+*******************************************************************************/
+//Sets Pin D2 for Temp Sensor
+DS18B20 ds18b20 = DS18B20(D2);
+
+// Sample temperature sensor every 30 seconds
+#define TEMPERATURE_SAMPLE_INTERVAL 30 * MILLISECONDS_TO_SECONDS
+elapsedMillis temperatureSampleInterval;
+
+//temperature related variables
+#define INVALID -1
+double temperatureCurrent = INVALID;
+double temperatureTarget = 30.0;
+
+//sensor difference with real temperature (if none set to zero)
+//use this variable to align measurements with your existing displays
+double temperatureCalibration = 0;
+
+// Celsius is the default unit, set this boolean to true if you want to use Fahrenheit
+const bool useFahrenheit = false;
+
+#define MILLISECONDS_TO_SECONDS 1000
+
+/*******************************************************************************
  * Function Name  : setup
  * Description    : this function runs once at system boot
  *******************************************************************************/
@@ -231,6 +261,12 @@ void setup()
   // Up to 15 cloud functions may be registered and each function name is limited to a maximum of 12 characters.
   Particle.function("setTemp", setTemp);
   Particle.function("turnOff", turnOff);
+
+  // declare cloud variables
+  // https://docs.particle.io/reference/firmware/photon/#particle-variable-
+  // Up to 20 cloud variables may be registered and each variable name is limited to a maximum of 12 characters.
+  Particle.variable("temperature", temperatureCurrent);
+  
 }
 
 /*******************************************************************************
@@ -241,7 +277,18 @@ void loop()
 {
   // enable this function to start decoding your remote
   // decodeIRcodes();
+
+  // read the temperature sensor
+  readTemperature();
 }
+
+/*******************************************************************************
+********************************************************************************
+********************************************************************************
+ INFRARED FUNCTIONS
+********************************************************************************
+********************************************************************************
+*******************************************************************************/
 
 /*******************************************************************************
  * Function Name  : setTemp
@@ -509,4 +556,78 @@ unsigned long decodeHash(decode_results *results)
     hash = (hash * FNV_PRIME_32) ^ value;
   }
   return hash;
+}
+
+/*******************************************************************************
+********************************************************************************
+********************************************************************************
+ SENSOR FUNCTIONS
+********************************************************************************
+********************************************************************************
+*******************************************************************************/
+
+/*******************************************************************************
+ * Function Name  : readTemperature
+ * Description    : reads the temperature sensor in D2 at every TEMPERATURE_SAMPLE_INTERVAL
+ * Return         : none
+ *******************************************************************************/
+void readTemperature()
+{
+
+  // is time up? no, then come back later
+  if (temperatureSampleInterval < TEMPERATURE_SAMPLE_INTERVAL)
+  {
+    return;
+  }
+
+  //is time up, reset timer
+  temperatureSampleInterval = 0;
+
+  getTemp();
+
+  Particle.publish(APP_NAME, "Temperature: " + double2string(temperatureCurrent), PRIVATE);
+}
+
+/*******************************************************************************
+ * Function Name  : getTemp
+ * Description    : reads the DS18B20 sensor on D2
+ * Return         : nothing
+ *******************************************************************************/
+void getTemp()
+{
+
+  int dsAttempts = 0;
+  double temperatureLocal = INVALID;
+
+  if (!ds18b20.search())
+  {
+    ds18b20.resetsearch();
+    temperatureLocal = ds18b20.getTemperature();
+    while (!ds18b20.crcCheck() && dsAttempts < 4)
+    {
+      dsAttempts++;
+      if (dsAttempts == 3)
+      {
+        delay(1000);
+      }
+      ds18b20.resetsearch();
+      temperatureLocal = ds18b20.getTemperature();
+      continue;
+    }
+    dsAttempts = 0;
+
+    if (useFahrenheit)
+    {
+      temperatureLocal = ds18b20.convertToFahrenheit(temperatureLocal);
+    }
+
+    // calibrate values
+    temperatureLocal = temperatureLocal + temperatureCalibration;
+
+    // if reading is valid, take it
+    if ((temperatureLocal != INVALID) && (ds18b20.crcCheck()))
+    {
+      temperatureCurrent = temperatureLocal;
+    }
+  }
 }
