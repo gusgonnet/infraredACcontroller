@@ -266,6 +266,11 @@ void setup()
   // https://docs.particle.io/reference/firmware/photon/#particle-variable-
   // Up to 20 cloud variables may be registered and each variable name is limited to a maximum of 12 characters.
   Particle.variable("temperature", temperatureCurrent);
+
+
+  // send a samsung volume up/down code (good for testing your circuit)
+  Particle.function("samsungVolUp", sendSamsungVolumeUp);
+  Particle.function("samsungVolDn", sendSamsungVolumeDown);
   
 }
 
