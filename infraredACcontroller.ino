@@ -24,15 +24,14 @@
 //
 // https://creativecommons.org/licenses/by-nc-sa/4.0/
 
-#include "application.h"
 #include "IRremote.h"
-
+#include "PietteTech_DHT.h"
 #include "Particle-OneWire.h"
 #include "DS18B20.h"
 #include "elapsedMillis.h"
 
 #define APP_NAME "infraredACcontroller"
-String VERSION = "Version 0.03";
+String VERSION = "Version 0.04";
 /*******************************************************************************
  * changes in version 0.01:
        * Initial version
@@ -40,6 +39,8 @@ String VERSION = "Version 0.03";
        * ready for testing
  * changes in version 0.03:
        * adding temperature sensor ds18b20 on D2
+ * changes in version 0.04:
+       * adding DHT22 sensor for sensing ambient temperature and humidity on D5
 *******************************************************************************/
 
 SYSTEM_MODE(AUTOMATIC);
@@ -98,6 +99,7 @@ unsigned int heat[15][59] = {{*heat_18}, {*heat_19}, {*heat_20}, {*heat_21}, {*h
 
 // OFF COMMAND
 unsigned int off[59] = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0};
+unsigned int on[59]  = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0};
 
 // ON COMMAND
 // To obtain the ON command for a setting/mode, I plan on setting the pulse at position 27 to 0 and the pulse at position 51 to 1.
@@ -243,6 +245,19 @@ const bool useFahrenheit = false;
 #define MILLISECONDS_TO_SECONDS 1000
 
 /*******************************************************************************
+ DHT sensor for ambient sensing
+*******************************************************************************/
+#define DHTTYPE  DHT22                // Sensor type DHT11/21/22/AM2301/AM2302
+#define DHTPIN   5                    // Digital pin for communications
+void dht_wrapper(); // must be declared before the lib initialization
+PietteTech_DHT DHT(DHTPIN, DHTTYPE, dht_wrapper);
+bool bDHTstarted;       // flag to indicate we started acquisition
+double temperatureCurrent4 = INVALID;
+double humidityCurrent4 = INVALID;
+// This wrapper is in charge of calling the DHT sensor lib
+void dht_wrapper() { DHT.isrCallback(); }
+
+/*******************************************************************************
  * Function Name  : setup
  * Description    : this function runs once at system boot
  *******************************************************************************/
@@ -267,11 +282,12 @@ void setup()
   // Up to 20 cloud variables may be registered and each variable name is limited to a maximum of 12 characters.
   Particle.variable("temperature", temperatureCurrent);
 
+  Particle.variable("tempAmbieDHT", temperatureCurrent4);
+  Particle.variable("humiAmbieDHT", humidityCurrent4);
 
   // send a samsung volume up/down code (good for testing your circuit)
   Particle.function("samsungVolUp", sendSamsungVolumeUp);
   Particle.function("samsungVolDn", sendSamsungVolumeDown);
-  
 }
 
 /*******************************************************************************
@@ -441,7 +457,6 @@ int convertToPulseDuration(unsigned int code)
   return -1;
 }
 
-
 // these are codes for a Samsung TV. I leave them here as an easy way to test your IR sending circuit
 // (handy if you have a samsung TV around)
 unsigned int SamsungVolumeUp[68] = {4600, 4350, 650, 1550, 700, 1500, 700, 1550, 700, 400, 700, 400, 700, 450, 650, 450, 700, 400, 700, 1500, 700, 1550, 650, 1550, 700, 400, 700, 400, 700, 450, 650, 450, 700, 400, 700, 1500, 700, 1550, 650, 1550, 700, 400, 700, 450, 700, 400, 700, 400, 700, 400, 700, 450, 650, 450, 650, 450, 650, 1550, 700, 1500, 700, 1550, 700, 1500, 700, 1550, 650};
@@ -589,8 +604,13 @@ void readTemperature()
   temperatureSampleInterval = 0;
 
   getTemp();
+  getTempAmbDHT();
 
-  Particle.publish(APP_NAME, "Temperature: " + double2string(temperatureCurrent), PRIVATE);
+  Particle.publish(APP_NAME, "TAmb: " + double2string(temperatureCurrent) \
+    + ", TAmbDHT: " + double2string(temperatureCurrent4) \
+    + ", HAmbDHT: " + double2string(humidityCurrent4) \
+    , PRIVATE);
+
 }
 
 /*******************************************************************************
@@ -636,6 +656,48 @@ void getTemp()
     }
   }
 }
+
+/*******************************************************************************
+ * Function Name  : getTempAmbDHT
+ * Description    : reads the temperature of the DHT22 sensor
+ * Return         : none
+ *******************************************************************************/
+void getTempAmbDHT() {
+
+  // start the sample
+  if (!bDHTstarted) {
+    DHT.acquireAndWait(5);
+    bDHTstarted = true;
+  }
+
+  //still acquiring sample? go away and come back later
+  if (DHT.acquiring()) {
+    return;
+  }
+
+  //I observed my dht22 measuring below 0 from time to time, so let's discard that sample
+  if ( DHT.getCelsius() < 0 ) {
+    //reset the sample flag so we can take another
+    bDHTstarted = false;
+    return;
+  }
+
+    if (useFahrenheit)
+    {
+      temperatureCurrent4 = DHT.getFahrenheit();
+    }
+    else
+    {
+      temperatureCurrent4 = DHT.getCelsius();
+    }
+
+  humidityCurrent4 = DHT.getHumidity();
+
+  //reset the sample flag so we can take another
+  bDHTstarted = false;
+
+}
+
 
 /*******************************************************************************
 ********************************************************************************
