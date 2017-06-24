@@ -31,7 +31,7 @@
 #include "elapsedMillis.h"
 
 #define APP_NAME "infraredACcontroller"
-String VERSION = "Version 0.04";
+String VERSION = "Version 0.05";
 /*******************************************************************************
  * changes in version 0.01:
        * Initial version
@@ -41,6 +41,9 @@ String VERSION = "Version 0.04";
        * adding temperature sensor ds18b20 on D2
  * changes in version 0.04:
        * adding DHT22 sensor for sensing ambient temperature and humidity on D5
+ * changes in version 0.05:
+       * fixing turn on/temp commands
+       * adding heat and cool cloud functions
 *******************************************************************************/
 
 SYSTEM_MODE(AUTOMATIC);
@@ -75,7 +78,8 @@ unsigned int cool_29[59] = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0
 unsigned int cool_30[59] = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0};
 
 // this 2 dimension array is for convenience of the code when setting the temperature
-unsigned int cool[13][59] = {{*cool_18}, {*cool_19}, {*cool_20}, {*cool_21}, {*cool_22}, {*cool_23}, {*cool_24}, {*cool_25}, {*cool_26}, {*cool_27}, {*cool_28}, {*cool_29}, {*cool_30}};
+// unsigned int cool[13][59] = {{*cool_18}, {*cool_19}, {*cool_20}, {*cool_21}, {*cool_22}, {*cool_23}, {*cool_24}, {*cool_25}, {*cool_26}, {*cool_27}, {*cool_28}, {*cool_29}, {*cool_30}};
+unsigned int cool[13][59];
 
 // HEAT COMMANDS
 unsigned int heat_16[59] = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0};
@@ -95,11 +99,13 @@ unsigned int heat_29[59] = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0
 unsigned int heat_30[59] = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0};
 
 // this 2 dimension array is for convenience of the code when setting the temperature
-unsigned int heat[15][59] = {{*heat_18}, {*heat_19}, {*heat_20}, {*heat_21}, {*heat_22}, {*heat_23}, {*heat_24}, {*heat_25}, {*heat_26}, {*heat_27}, {*heat_28}, {*heat_29}, {*heat_30}};
+// unsigned int heat[15][59] = {{*heat_18}, {*heat_19}, {*heat_20}, {*heat_21}, {*heat_22}, {*heat_23}, {*heat_24}, {*heat_25}, {*heat_26}, {*heat_27}, {*heat_28}, {*heat_29}, {*heat_30}};
+unsigned int heat[15][59];
 
 // OFF COMMAND
 unsigned int off[59] = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0};
-unsigned int on[59]  = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0};
+// ON COMMAND
+unsigned int on[59] = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0};
 
 // ON COMMAND
 // To obtain the ON command for a setting/mode, I plan on setting the pulse at position 27 to 0 and the pulse at position 51 to 1.
@@ -247,11 +253,11 @@ const bool useFahrenheit = false;
 /*******************************************************************************
  DHT sensor for ambient sensing
 *******************************************************************************/
-#define DHTTYPE  DHT22                // Sensor type DHT11/21/22/AM2301/AM2302
-#define DHTPIN   5                    // Digital pin for communications
-void dht_wrapper(); // must be declared before the lib initialization
+#define DHTTYPE DHT22 // Sensor type DHT11/21/22/AM2301/AM2302
+#define DHTPIN 5      // Digital pin for communications
+void dht_wrapper();   // must be declared before the lib initialization
 PietteTech_DHT DHT(DHTPIN, DHTTYPE, dht_wrapper);
-bool bDHTstarted;       // flag to indicate we started acquisition
+bool bDHTstarted; // flag to indicate we started acquisition
 double temperatureCurrent4 = INVALID;
 double humidityCurrent4 = INVALID;
 // This wrapper is in charge of calling the DHT sensor lib
@@ -276,6 +282,9 @@ void setup()
   // Up to 15 cloud functions may be registered and each function name is limited to a maximum of 12 characters.
   Particle.function("setTemp", setTemp);
   Particle.function("turnOff", turnOff);
+  Particle.function("turnOn", turnOn);
+  Particle.function("heat", setHeat);
+  Particle.function("cool", setCool);
 
   // declare cloud variables
   // https://docs.particle.io/reference/firmware/photon/#particle-variable-
@@ -288,6 +297,10 @@ void setup()
   // send a samsung volume up/down code (good for testing your circuit)
   Particle.function("samsungVolUp", sendSamsungVolumeUp);
   Particle.function("samsungVolDn", sendSamsungVolumeDown);
+
+  setupCoolArray();
+  setupHeatArray();
+
 }
 
 /*******************************************************************************
@@ -407,10 +420,109 @@ int setTemp(String command)
   }
 
   // let's send the command twice so we make sure the device gets it
-  irsend.sendRaw(irPulsesToSendWithOnCommand, IR_COMMAND_LENGTH, IR_CARRIER_FREQUENCY); // ---->>> this should be the ON command plus temp desired
-  delay(500);
+  // irsend.sendRaw(irPulsesToSendWithOnCommand, IR_COMMAND_LENGTH, IR_CARRIER_FREQUENCY); // ---->>> this should be the ON command plus temp desired
+  // delay(500);
   irsend.sendRaw(irPulsesToSend, IR_COMMAND_LENGTH, IR_CARRIER_FREQUENCY);
   Particle.publish(APP_NAME, "Setting device to: " + decodedCommand + "/" + targetTemp, PRIVATE);
+  return 0;
+}
+
+/*******************************************************************************
+ * Function Name  : setHeat
+ * Description    : this function sents the IR command to set the temperature of the device
+                    for heating, in the parameter send in the temperature desired
+                    where temperature is 16 <= XX <= 30
+                    Example: "18"
+ *******************************************************************************/
+int setHeat(String command)
+{
+  unsigned int irPulsesToSend[IR_COMMAND_LENGTH];
+  int i, targetTemp;
+
+  // verify the command length is valid
+  if (command.length() != 2)
+  {
+    Particle.publish("ERROR", "Temperature has to be two digits long: " + command, PRIVATE);
+    return -1;
+  }
+
+  // parse the temperature
+  targetTemp = command.toInt();
+
+  // verify the temperature is valid. Valid range is 16~30
+  if ((targetTemp < 16) || (targetTemp > 30))
+  {
+    Particle.publish("ERROR", "Invalid temperature: " + String(targetTemp) + ". Valid range: 16~30", PRIVATE);
+    return -1;
+  }
+
+  // unsigned int heat_16[59] = {3, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0};
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++)
+  {
+    irPulsesToSend[i] = heat[targetTemp - 16][i];
+  }
+
+  // convert the command from 3,2,1,0 to respective pulse duration
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++)
+  {
+    irPulsesToSend[i] = convertToPulseDuration(irPulsesToSend[i]);
+  }
+
+  // let's send the command twice so we make sure the device gets it
+  // irsend.sendRaw(irPulsesToSendWithOnCommand, IR_COMMAND_LENGTH, IR_CARRIER_FREQUENCY); // ---->>> this should be the ON command plus temp desired
+  // delay(500);
+  irsend.sendRaw(irPulsesToSend, IR_COMMAND_LENGTH, IR_CARRIER_FREQUENCY);
+  Particle.publish(APP_NAME, "Setting device to HEAT " + command, PRIVATE);
+  return 0;
+}
+
+/*******************************************************************************
+ * Function Name  : setCool
+ * Description    : this function sents the IR command to set the temperature of the device
+                    for cooling, the command must be in the form of "coolXX" 
+                    where temperature must be 18 <= XX <= 30
+                    Example: "23"
+ *******************************************************************************/
+int setCool(String command)
+{
+  unsigned int irPulsesToSend[IR_COMMAND_LENGTH];
+  int i, targetTemp;
+
+  // verify the command length is valid
+  if (command.length() != 2)
+  {
+    Particle.publish("ERROR", "Temperature has to be two digits long: " + command, PRIVATE);
+    return -1;
+  }
+
+  // parse the temperature
+  targetTemp = command.toInt();
+
+  // verify the temperature is valid. Valid range is 18~30
+  if ((targetTemp < 18) || (targetTemp > 30))
+  {
+    Particle.publish("ERROR", "Invalid temperature: " + String(targetTemp) + ". Valid range: 18~30", PRIVATE);
+    return -1;
+  }
+
+  // unsigned int cool[13][59] = { {*cool_18}, {*cool_19}, {*cool_20}, {*cool_21}, {*cool_22}, {*cool_23}, {*cool_24}, {*cool_25}, {*cool_26}, {*cool_27}, {*cool_28}, {*cool_29}, {*cool_30}};
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++)
+  {
+    irPulsesToSend[i] = cool[targetTemp - 18][i];
+  }
+
+  // convert the command from 3,2,1,0 to respective pulse duration
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++)
+  {
+    // irPulsesToSend[i] = convertToPulseDuration(irPulsesToSend[i]);
+    irPulsesToSend[i] = convertToPulseDuration(irPulsesToSend[i]);
+  }
+
+  // let's send the command twice so we make sure the device gets it
+  // irsend.sendRaw(irPulsesToSendWithOnCommand, IR_COMMAND_LENGTH, IR_CARRIER_FREQUENCY); // ---->>> this should be the ON command plus temp desired
+  // delay(500);
+  irsend.sendRaw(irPulsesToSend, IR_COMMAND_LENGTH, IR_CARRIER_FREQUENCY);
+  Particle.publish(APP_NAME, "Setting device to COOL " + command, PRIVATE);
   return 0;
 }
 
@@ -420,11 +532,43 @@ int setTemp(String command)
  *******************************************************************************/
 int turnOff(String dummy)
 {
+  unsigned int irPulsesToSend[IR_COMMAND_LENGTH];
 
-  irsend.sendRaw(off, 59, 38);
-  delay(500);
-  irsend.sendRaw(off, 59, 38);
+  // convert the command from 3,2,1,0 to respective pulse duration
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++)
+  {
+    irPulsesToSend[i] = convertToPulseDuration(off[i]);
+  }
+
+  irsend.sendRaw(irPulsesToSend, 59, 38);
   Particle.publish(APP_NAME, "Setting device to OFF", PRIVATE);
+  return 0;
+}
+
+/*******************************************************************************
+ * Function Name  : turnOn
+ * Description    : this function sents the IR command to turn on the device
+ *******************************************************************************/
+int turnOn(String dummy)
+{
+  unsigned int irPulsesToSend[IR_COMMAND_LENGTH];
+
+  // convert the command from 3,2,1,0 to respective pulse duration
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++)
+  {
+    irPulsesToSend[i] = convertToPulseDuration(on[i]);
+  }
+
+    String decodif = "";
+    for (int i = 0; i < IR_COMMAND_LENGTH; i++)
+    {
+      decodif = decodif + String(on[i]) + ",";
+    }
+    decodif = decodif + "END";
+    Serial.println(decodif);
+
+  irsend.sendRaw(irPulsesToSend, 59, 38);
+  Particle.publish(APP_NAME, "Setting device to ON", PRIVATE);
   return 0;
 }
 
@@ -606,11 +750,7 @@ void readTemperature()
   getTemp();
   getTempAmbDHT();
 
-  Particle.publish(APP_NAME, "TAmb: " + double2string(temperatureCurrent) \
-    + ", TAmbDHT: " + double2string(temperatureCurrent4) \
-    + ", HAmbDHT: " + double2string(humidityCurrent4) \
-    , PRIVATE);
-
+  Particle.publish(APP_NAME, "TAmb: " + double2string(temperatureCurrent) + ", TAmbDHT: " + double2string(temperatureCurrent4) + ", HAmbDHT: " + double2string(humidityCurrent4), PRIVATE);
 }
 
 /*******************************************************************************
@@ -662,42 +802,44 @@ void getTemp()
  * Description    : reads the temperature of the DHT22 sensor
  * Return         : none
  *******************************************************************************/
-void getTempAmbDHT() {
+void getTempAmbDHT()
+{
 
   // start the sample
-  if (!bDHTstarted) {
+  if (!bDHTstarted)
+  {
     DHT.acquireAndWait(5);
     bDHTstarted = true;
   }
 
   //still acquiring sample? go away and come back later
-  if (DHT.acquiring()) {
+  if (DHT.acquiring())
+  {
     return;
   }
 
   //I observed my dht22 measuring below 0 from time to time, so let's discard that sample
-  if ( DHT.getCelsius() < 0 ) {
+  if (DHT.getCelsius() < 0)
+  {
     //reset the sample flag so we can take another
     bDHTstarted = false;
     return;
   }
 
-    if (useFahrenheit)
-    {
-      temperatureCurrent4 = DHT.getFahrenheit();
-    }
-    else
-    {
-      temperatureCurrent4 = DHT.getCelsius();
-    }
+  if (useFahrenheit)
+  {
+    temperatureCurrent4 = DHT.getFahrenheit();
+  }
+  else
+  {
+    temperatureCurrent4 = DHT.getCelsius();
+  }
 
   humidityCurrent4 = DHT.getHumidity();
 
   //reset the sample flag so we can take another
   bDHTstarted = false;
-
 }
-
 
 /*******************************************************************************
 ********************************************************************************
@@ -722,4 +864,164 @@ String double2string(double doubleNumber)
   stringNumber = stringNumber.substring(0, stringNumber.length() - 4);
 
   return stringNumber;
+}
+
+/*******************************************************************************
+ * Function Name  : setupCoolArray
+ * Description    : fill up the cool array
+ * Return         : void
+ *******************************************************************************/
+void setupCoolArray()
+{
+
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++) 
+  {
+    cool[0][i] = cool_18[i];
+  }
+
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++) 
+  {
+    cool[1][i] = cool_19[i];
+  }
+
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++) 
+  {
+    cool[2][i] = cool_20[i];
+  }
+
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++) 
+  {
+    cool[3][i] = cool_21[i];
+  }
+
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++) 
+  {
+    cool[4][i] = cool_22[i];
+  }
+
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++) 
+  {
+    cool[5][i] = cool_23[i];
+  }
+
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++) 
+  {
+    cool[6][i] = cool_24[i];
+  }
+
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++) 
+  {
+    cool[7][i] = cool_25[i];
+  }
+
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++) 
+  {
+    cool[8][i] = cool_26[i];
+  }
+
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++) 
+  {
+    cool[9][i] = cool_27[i];
+  }
+
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++) 
+  {
+    cool[10][i] = cool_28[i];
+  }
+
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++) 
+  {
+    cool[11][i] = cool_29[i];
+  }
+
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++) 
+  {
+    cool[12][i] = cool_30[i];
+  }
+
+}
+
+/*******************************************************************************
+ * Function Name  : setupHeatArray
+ * Description    : fill up the heat array
+ * Return         : void
+ *******************************************************************************/
+void setupHeatArray()
+{
+
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++) 
+  {
+    heat[0][i] = heat_16[i];
+  }
+
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++) 
+  {
+    heat[1][i] = heat_17[i];
+  }
+
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++) 
+  {
+    heat[2][i] = heat_18[i];
+  }
+
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++) 
+  {
+    heat[3][i] = heat_19[i];
+  }
+
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++) 
+  {
+    heat[4][i] = heat_20[i];
+  }
+
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++) 
+  {
+    heat[5][i] = heat_21[i];
+  }
+
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++) 
+  {
+    heat[6][i] = heat_22[i];
+  }
+
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++) 
+  {
+    heat[7][i] = heat_23[i];
+  }
+
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++) 
+  {
+    heat[8][i] = heat_24[i];
+  }
+
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++) 
+  {
+    heat[9][i] = heat_25[i];
+  }
+
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++) 
+  {
+    heat[10][i] = heat_26[i];
+  }
+
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++) 
+  {
+    heat[11][i] = heat_27[i];
+  }
+
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++) 
+  {
+    heat[12][i] = heat_28[i];
+  }
+
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++) 
+  {
+    heat[13][i] = heat_29[i];
+  }
+
+  for (int i = 0; i < IR_COMMAND_LENGTH; i++) 
+  {
+    heat[14][i] = heat_30[i];
+  }
+
 }
