@@ -42,6 +42,7 @@ String VERSION = "Version 0.05";
  * changes in version 0.04:
        * adding DHT22 sensor for sensing ambient temperature and humidity on D5
  * changes in version 0.05:
+       * Particle share link: https://go.particle.io/shared_apps/5aea78bf5ae4dfa4a4000e74
        * fixing turn on/temp commands
        * adding heat and cool cloud functions
 *******************************************************************************/
